@@ -36,7 +36,7 @@ int fd;
 pid_t pid;
 char history_cmd[MAX_HISTORY_NUM][MAX_SIZE];
 int history_cmd_index = 0;
-char path[MAX_SIZE];
+char *path;
 int sum_commands = 0;
 char *save;  // for strtok_r MT_safe
 
@@ -47,8 +47,19 @@ void parse_command();
 void execute();
 
 int main() {
+    printf("\033[1;34m%s\033[0m", "------------------------------------------------------------\n");
+    printf("\033[1;34m%s\033[0m", "|                                                          |\n");
+	printf("\033[1;34m%s\033[0m", "|      	         Welcome to yuelin's shell                 |\n");
+    printf("\033[1;34m%s\033[0m", "|                                                          |\n");
+	printf("\033[1;34m%s\033[0m", "------------------------------------------------------------\n");
+
+    // 得到家目录
+    char *home;
+    home = getenv("HOME");
     
+    path = (char *)malloc(MAX_SIZE * sizeof(char));
     getcwd(path, MAX_SIZE);
+
     int i;
     for(i = 0; i < MAX_HISTORY_NUM; i++) {
         memset(history_cmd[i], 0, MAX_SIZE);                     // 初始化历史指令数组
@@ -57,7 +68,14 @@ int main() {
     while (1)
     {
         init();                                                   // 初始化
-        printf("yuelin's shell:%s$ ", path);                      // 输出提示符
+        
+        if(strstr(path, home) != 0) {                             // 将家目录替换为～
+            char *n_path = (char *)malloc(MAX_SIZE * sizeof(char));
+            *n_path = '~';
+            strncpy(n_path + 1, path + strlen(home), strlen(path) - strlen(home));
+            path = n_path;
+        }                    
+        printf("\033[1;32m%s:\033[0m\033[1;34m%s\033[0m$ ","yuelin's shell", path);  // 提示符
         fgets(input, MAX_SIZE, stdin);                            // 读取输入
         if (input[strlen(input) - 1] == '\n') {
 			input[strlen(input) - 1] = '\0';
@@ -68,13 +86,11 @@ int main() {
             sum_commands ++;
         }      
         if (strcmp(input, "exit") == 0) {
-            printf("Shell closed.\n");
+            printf("\033[1;34m%s\033[0m", "Shell closed.\n");
             break;
         }
         parse_input();
         execute();
-        
-
     }
 }
 
@@ -248,6 +264,7 @@ void execute() {
                 waitpid(0, NULL, 0);
             } 
         }
+        return;
     }
     if((pid = fork()) < 0) {
         perror("subprocess fork failed!");

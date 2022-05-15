@@ -68,68 +68,91 @@ int cd_flag;                      // 表示当前指令是切换目录指令
 
 3. 各功能实现方法
 
-   1. 查询历史指令
+   1. Shell 的进入与退出
 
-      输入格式：`history`
+      ![进入与退出](进入与退出.png)
 
-      执行示例：
+   2. 单句指令
    
-      ![微信图片_20220505141833](流程图\微信图片_20220505141833.png)
-   
-   2. 跳转执行历史指令
-   
-      输入格式：`h\d`，如h1(h后的数字在1-9范围内)
+      输入格式与Linux Shell相同
    
       执行示例：
    
-      ![微信图片_202205051418339](流程图\微信图片_202205051418339.png)
+      ![单句指令](C:\Users\ylhappy\Desktop\1-Unix\BUAA_Unix_2022\Unix大作业\单句指令.png)
    
+      ​	单条指令执行逻辑(以下重定向或管道中单条指令的运行逻辑均与此相同，只是将输入输出指向的文件做了替换)：
+   
+      ```c
+      if((pid = fork()) < 0) {                      // 父进程新建子进程
+              perror("subprocess fork failed!");    // 新建子进程不成功则报错并退出
+              return;
+          } else if(pid == 0) {
+              execvp(/*content of the command*/);   // 根据指令信息得到可执行文件，并取代原子进程内容
+              perror("exec failed!");               // 子进程执行失败报错
+              exit(-1);                             // 子进程执行失败退出
+              return;
+          } else {
+              waitpid(0, NULL, 0);                  // 父进程等待子进程运行完毕
+          }
+          return;
+      ```
+
+      
+
+   3. 查询和跳转执行历史指令
+
+      输入格式：`history`  以及  `h\d`，如h1(h后的数字在1-9范围内)
+
+      执行示例：
+
+      ![历史指令](历史指令.png)
+
    ​	
-   
-   3. cd指令
-   
+
+   3. 切换当前目录指令
+
       输入格式：`cd`
-   
-      执行示例：
-   
-      ![微信图片_202205051418331](流程图\微信图片_202205051418331.png)
-   
-      实现流程图：
-   
 
+      执行示例：
+
+      ![cd](cd.png)
+
+      实现流程图：
+
+   
    ​    ![cd](流程图\cd.png)
-
    
-
+   
+   
    4. 重定向指令
-
+   
       输入格式：`command > file  or  command >> file  or command < file`，重定向符号前后有无空格均可。
-
+   
       执行示例：
-
-      ![ed53587f39fe692c19a99e214b18b8f](流程图\ed53587f39fe692c19a99e214b18b8f.png)
-
-      ![微信图片_202205051418337](流程图\微信图片_202205051418337.png)
-
+   
+      ​	重定向输出![输出重定向](输出重定向.png)
+   
+      ​	重定向输入![输入重定向](输入重定向.png)
+   
+      ​		
+   
       实现流程图：
-
+   
       ![重定向](流程图\重定向.png)
-
+   
    5. 管道指令
-
+   
       输入格式：`command1 | command2`
-
+   
       执行示例:
-
-      ![微信图片_202205051418335](流程图\微信图片_202205051418335.png)
-
+   
+      ![管道](C:\Users\ylhappy\Desktop\1-Unix\BUAA_Unix_2022\Unix大作业\管道.png)
+   
       实现流程图：
    
       
    
    ![管道](流程图\管道.png)
-
-
 
 
 
@@ -174,7 +197,7 @@ int fd;
 pid_t pid;
 char history_cmd[MAX_HISTORY_NUM][MAX_SIZE];
 int history_cmd_index = 0;
-char path[MAX_SIZE];
+char *path;
 int sum_commands = 0;
 char *save;  // for strtok_r MT_safe
 
@@ -185,8 +208,19 @@ void parse_command();
 void execute();
 
 int main() {
+    printf("\033[1;34m%s\033[0m", "------------------------------------------------------------\n");
+    printf("\033[1;34m%s\033[0m", "|                                                          |\n");
+	printf("\033[1;34m%s\033[0m", "|      	         Welcome to yuelin's shell                 |\n");
+    printf("\033[1;34m%s\033[0m", "|                                                          |\n");
+	printf("\033[1;34m%s\033[0m", "------------------------------------------------------------\n");
+
+    // 得到家目录
+    char *home;
+    home = getenv("HOME");
     
+    path = (char *)malloc(MAX_SIZE * sizeof(char));
     getcwd(path, MAX_SIZE);
+
     int i;
     for(i = 0; i < MAX_HISTORY_NUM; i++) {
         memset(history_cmd[i], 0, MAX_SIZE);                     // 初始化历史指令数组
@@ -195,7 +229,14 @@ int main() {
     while (1)
     {
         init();                                                   // 初始化
-        printf("yuelin's shell:%s$ ", path);                      // 输出提示符
+        
+        if(strstr(path, home) != 0) {                             // 将家目录替换为～
+            char *n_path = (char *)malloc(MAX_SIZE * sizeof(char));
+            *n_path = '~';
+            strncpy(n_path + 1, path + strlen(home), strlen(path) - strlen(home));
+            path = n_path;
+        }                    
+        printf("\033[1;32m%s:\033[0m\033[1;34m%s\033[0m$ ","yuelin's shell", path);  // 提示符
         fgets(input, MAX_SIZE, stdin);                            // 读取输入
         if (input[strlen(input) - 1] == '\n') {
 			input[strlen(input) - 1] = '\0';
@@ -206,13 +247,11 @@ int main() {
             sum_commands ++;
         }      
         if (strcmp(input, "exit") == 0) {
-            printf("Shell closed.\n");
+            printf("\033[1;34m%s\033[0m", "Shell closed.\n");
             break;
         }
         parse_input();
         execute();
-        
-
     }
 }
 
@@ -386,6 +425,7 @@ void execute() {
                 waitpid(0, NULL, 0);
             } 
         }
+        return;
     }
     if((pid = fork()) < 0) {
         perror("subprocess fork failed!");
@@ -401,6 +441,25 @@ void execute() {
     return;
 }
 ```
+
+
+
+### 六、总结
+
+​	这次大作业给我带来的收获非常大，一是从头学习了系统调用函数，如`fork, open close, execvp, chdir getcwd, pipe, waitpid, dup2`，二是在编码过程中了解了很多C语言字符串处理库函数，比如`strstr, strncpy, strncmp, strtok_r, sprintf `并把它们用到了程序中，三是操作系统课程实验正好进行到fork函数的实现，一次性学完fork的实现和应用让我觉得十分畅快和通透。
+
+​	最后总结一下本次作业的优势和可拓展的方向：
+
+​	优势：
+
+  		1. 在重定向或管道连接两条指令时不需要严格在分隔符左右加空格，这是应用了`strtok_r`函数带来的好处；
+  		2. 提示符的颜色和Ubuntu提示符颜色相同；
+
+​	拓展方向：
+
+1. 拓展支持多条管道指令；
+2. 给文件夹，可执行文件等加上不同的颜色；
+3. 实时读取用户输入，实现Tab补全，上下键浏览历史指令，这点是比较难实现的。
 
 
 
