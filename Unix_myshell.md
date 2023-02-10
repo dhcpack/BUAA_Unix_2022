@@ -70,7 +70,7 @@ int cd_flag;                      // 表示当前指令是切换目录指令
 
    1. Shell 的进入与退出
 
-      ![进入与退出](.\upload\进入与退出.png)
+      ![进入与退出](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E8%BF%9B%E5%85%A5%E4%B8%8E%E9%80%80%E5%87%BA.png)
 
    2. 单句指令
    
@@ -78,7 +78,7 @@ int cd_flag;                      // 表示当前指令是切换目录指令
    
       执行示例：
    
-      ![单句指令](.\upload\单句指令.png)
+      ![单句指令](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E5%8D%95%E5%8F%A5%E6%8C%87%E4%BB%A4.png)
    
       ​	单条指令执行逻辑(以下重定向或管道中单条指令的运行逻辑均与此相同，只是将输入输出指向的文件做了替换)：
    
@@ -105,7 +105,7 @@ int cd_flag;                      // 表示当前指令是切换目录指令
 
       执行示例：
 
-      ![历史指令](.\upload\历史指令.png)
+      ![历史指令](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E5%8E%86%E5%8F%B2%E6%8C%87%E4%BB%A4.png)
 
    ​	
 
@@ -115,12 +115,12 @@ int cd_flag;                      // 表示当前指令是切换目录指令
 
       执行示例：
 
-      ![cd](.\upload\cd.png)
+      ![cd](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/cd.png)
 
       实现流程图：
 
    
-   ​    ![cd](.\upload\流程图\cd.png)
+   ​    ![cd](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E6%B5%81%E7%A8%8B%E5%9B%BE/cd.png)
    
    
    
@@ -130,15 +130,15 @@ int cd_flag;                      // 表示当前指令是切换目录指令
    
       执行示例：
    
-      ​	重定向输出![输出重定向](.\upload\输出重定向.png)
+      ​	重定向输出![输出重定向](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E8%BE%93%E5%87%BA%E9%87%8D%E5%AE%9A%E5%90%91.png)
    
-      ​	重定向输入![输入重定向](.\upload\输入重定向.png)
+      ​	重定向输入![输入重定向](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E8%BE%93%E5%85%A5%E9%87%8D%E5%AE%9A%E5%90%91.png)
    
       ​		
    
       实现流程图：
    
-      ![重定向](.\upload\流程图\重定向.png)
+      ![重定向](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E6%B5%81%E7%A8%8B%E5%9B%BE/%E9%87%8D%E5%AE%9A%E5%90%91.png)
    
    5. 管道指令
    
@@ -146,13 +146,13 @@ int cd_flag;                      // 表示当前指令是切换目录指令
    
       执行示例:
    
-      ![管道](.\upload\管道.png)
+      ![管道](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E7%AE%A1%E9%81%93.png)
    
       实现流程图：
    
       
    
-   ![管道](.\upload\流程图\管道.png)
+   ![管道](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E6%B5%81%E7%A8%8B%E5%9B%BE/%E7%AE%A1%E9%81%93.png)
 
 
 
