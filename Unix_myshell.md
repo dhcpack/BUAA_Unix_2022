@@ -40,7 +40,7 @@
 
 2. 程序执行流程
 
-![流程图_00](.\upload\流程图\流程图_00.png)
+![流程图_00](https://github.com/mooneater1021/BUAA_Unix_2022/blob/main/upload/%E6%B5%81%E7%A8%8B%E5%9B%BE/%E6%B5%81%E7%A8%8B%E5%9B%BE_00.png)
 
 ​	在程序中，我定义了一个如下的command结构体，对输入的信息进行管理；并定义了下面的标志位，用于区分输入的指令类型。
 
